@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -10,10 +11,10 @@ namespace Hijacker
 {
     public partial class Form1 : Form
     {
-        private const string c_location = @"C:\view";
         private Settings m_settings;
         private ITreeItem[] m_slns;
 
+        private List<string> m_locations = new List<string>();
         private string m_progressText = "Loading...";
         private readonly HijackItemsTableModel m_hijackModel;
 
@@ -26,17 +27,27 @@ namespace Hijacker
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            m_settings = Settings.Get();
+            m_locations.Clear();
+            m_locations.AddRange(m_settings.VobPaths ?? Enumerable.Empty<string>());
             RefreshData();
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            Settings.Set(m_slns);
+            Settings.Set(m_slns, m_locations.ToArray());
         }
 
         private void RefreshData()
         {
+            if (m_slns != null)
+            {
+                foreach (var sln in m_slns.SelectMany(x => x.Children).OfType<SolutionItem>())
+                {
+                    sln.Close();
+                }
+            }
             progressBar.Value = 0;
             m_progressText = "Loading...";
             panelProgress.BringToFront();
@@ -53,6 +64,7 @@ namespace Hijacker
                     m_hijackModel.To = null;
                 }
                 m_hijackModel.From = from;
+                lblSelected.Text = Path.GetFileName(m_hijackModel.From.DllPath);
             }
             solutionTree1.Color(m_hijackModel.From != null
                 ? m_slns.SelectMany(x => x.Children)
@@ -77,16 +89,10 @@ namespace Hijacker
                 Focus();
             }
         }
-
-        private void Refresh(object sender, EventArgs e)
-        {
-            RefreshData();
-        }
-
+        
         private void OnDataLoad(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            m_slns = TreeBuilder.Build(c_location, (x, s) => backgroundWorker.ReportProgress((int) ((x ?? -0.01)*100), s));
-            m_settings = Settings.Get();
+            m_slns = TreeBuilder.Build(m_locations.ToArray(), (x, s) => backgroundWorker.ReportProgress((int) ((x ?? -0.01)*100), s));
         }
 
         private void OnDataProgress(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -123,6 +129,32 @@ namespace Hijacker
             };
             e.Graphics.FillRectangle(Brushes.LightGray, rect);
             e.Graphics.DrawString(m_progressText, Font, Brushes.Black, rect, format);
+        }
+
+        private void OnResetSelectedDll(object sender, EventArgs e)
+        {
+            m_hijackModel.From = null;
+            solutionTree1.Color(null);
+            m_hijackModel.UpdateLabels();
+            lblSelected.Text = Path.GetFileName("(Empty selection)");
+        }
+
+        private void OnChooseLocations(object sender, EventArgs e)
+        {
+            using (var form = new LocationsForm())
+            {
+                form.Locations = m_locations.ToArray();
+                if (form.ShowDialog(this) == DialogResult.OK)
+                {
+                    m_locations.Clear();
+                    m_locations.AddRange(form.Locations);
+                }
+            }
+        }
+
+        private void OnRefresh(object sender, EventArgs e)
+        {
+            RefreshData();
         }
     }
 }

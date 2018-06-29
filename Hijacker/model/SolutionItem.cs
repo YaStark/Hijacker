@@ -4,11 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Hijacker.controls;
+using Microsoft.Build.Evaluation;
 using Microsoft.Build.Exceptions;
 
 namespace Hijacker.model
 {
-    public class SolutionItem : ITreeItem
+    public class SolutionItem : TreeItemBase
     {
         //internal class SolutionParser
         //Name: Microsoft.Build.Construction.SolutionParser
@@ -21,12 +22,6 @@ namespace Hijacker.model
         static readonly PropertyInfo s_solutionParser_projects;
         static readonly PropertyInfo s_projectInSolutionRelativePath;
 
-        public ITreeItem Root { get; private set; }
-        public List<ITreeItem> Children { get; private set; }
-        public string Name { get; private set; }
-        public string Path { get; private set; }
-        public string FilePath { get; private set; }
-        public bool Visible { get; set; }
         public ProjectDescription[] Dependencies { get; private set; }
 
         static SolutionItem()
@@ -97,6 +92,14 @@ namespace Hijacker.model
         public override int GetHashCode()
         {
             return FilePath.GetHashCode();
+        }
+
+        public void Close()
+        {
+            foreach (ProjectItem project in Children.Cast<ProjectItem>())
+            {
+                ProjectCollection.GlobalProjectCollection.UnloadProject(project);                
+            }
         }
     }
 }

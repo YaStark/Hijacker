@@ -3,15 +3,8 @@ using Hijacker.controls;
 
 namespace Hijacker.model
 {
-    public class FolderItem : ITreeItem
+    public class FolderItem : TreeItemBase
     {
-        public ITreeItem Root { get; private set; }
-        public List<ITreeItem> Children { get; private set; }
-        public string Name { get; private set; }
-        public string Path { get; private set; }
-        public string FilePath { get; private set; }
-        public bool Visible { get; set; }
-
         public FolderItem(string path)
         {
             Root = null;

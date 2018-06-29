@@ -15,6 +15,7 @@ namespace Hijacker.model
         public bool Visible { get; set; }
         public ProjectDescription[] Dependencies { get; private set; }
         public string DllPath { get; private set; }
+        public string Tag { get; set; }
 
         public ProjectItem(SolutionItem solution, string path) : base(path)
         {

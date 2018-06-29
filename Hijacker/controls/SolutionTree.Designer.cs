@@ -35,11 +35,14 @@ namespace Hijacker.controls
             this.components = new System.ComponentModel.Container();
             this.canvas = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.folderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openSolutionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.folderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.addTagToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.removeViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -62,17 +65,13 @@ namespace Hijacker.controls
             this.openSolutionToolStripMenuItem,
             this.folderToolStripMenuItem,
             this.toolStripSeparator1,
+            this.addTagToolStripMenuItem,
             this.hideToolStripMenuItem,
-            this.showAllToolStripMenuItem});
+            this.showAllToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.removeViewToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(153, 120);
-            // 
-            // folderToolStripMenuItem
-            // 
-            this.folderToolStripMenuItem.Name = "folderToolStripMenuItem";
-            this.folderToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
-            this.folderToolStripMenuItem.Text = "Open folder";
-            this.folderToolStripMenuItem.Click += new System.EventHandler(this.OnLocation);
+            this.contextMenuStrip.Size = new System.Drawing.Size(153, 170);
             // 
             // openSolutionToolStripMenuItem
             // 
@@ -81,15 +80,29 @@ namespace Hijacker.controls
             this.openSolutionToolStripMenuItem.Text = "Open solution";
             this.openSolutionToolStripMenuItem.Click += new System.EventHandler(this.OnOpenSln);
             // 
+            // folderToolStripMenuItem
+            // 
+            this.folderToolStripMenuItem.Name = "folderToolStripMenuItem";
+            this.folderToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.folderToolStripMenuItem.Text = "Open folder";
+            this.folderToolStripMenuItem.Click += new System.EventHandler(this.OnLocation);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(146, 6);
             // 
+            // addTagToolStripMenuItem
+            // 
+            this.addTagToolStripMenuItem.Name = "addTagToolStripMenuItem";
+            this.addTagToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.addTagToolStripMenuItem.Text = "Add tag...";
+            this.addTagToolStripMenuItem.Click += new System.EventHandler(this.OnAddTag);
+            // 
             // hideToolStripMenuItem
             // 
             this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
-            this.hideToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hideToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.hideToolStripMenuItem.Text = "Hide";
             this.hideToolStripMenuItem.Click += new System.EventHandler(this.OnHide);
             // 
@@ -97,9 +110,21 @@ namespace Hijacker.controls
             // 
             this.showAllToolStripMenuItem.CheckOnClick = true;
             this.showAllToolStripMenuItem.Name = "showAllToolStripMenuItem";
-            this.showAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.showAllToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.showAllToolStripMenuItem.Text = "Show all";
             this.showAllToolStripMenuItem.Click += new System.EventHandler(this.OnShowAll);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(146, 6);
+            // 
+            // removeViewToolStripMenuItem
+            // 
+            this.removeViewToolStripMenuItem.Name = "removeViewToolStripMenuItem";
+            this.removeViewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.removeViewToolStripMenuItem.Text = "Remove view";
+            this.removeViewToolStripMenuItem.Click += new System.EventHandler(this.OnRemoveView);
             // 
             // SolutionTree
             // 
@@ -122,5 +147,8 @@ namespace Hijacker.controls
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem hideToolStripMenuItem;
         private ToolStripMenuItem showAllToolStripMenuItem;
+        private ToolStripMenuItem addTagToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem removeViewToolStripMenuItem;
     }
 }

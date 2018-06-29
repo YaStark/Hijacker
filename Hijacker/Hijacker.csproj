@@ -50,7 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="controls\Column.cs" />
+    <Compile Include="controls\table\ButtonCell.cs" />
+    <Compile Include="controls\table\Column.cs" />
+    <Compile Include="controls\table\EditCell.cs" />
     <Compile Include="controls\FormResolveConnections.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,11 +62,27 @@
     <Compile Include="controls\HijackItemsTable.Designer.cs">
       <DependentUpon>HijackItemsTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="controls\HijackItemsTableModel.cs" />
+    <Compile Include="controls\table\ImageCell.cs" />
+    <Compile Include="controls\InputDialogBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="controls\InputDialogBox.Designer.cs">
+      <DependentUpon>InputDialogBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="controls\ITreeModel.cs" />
-    <Compile Include="controls\SimpleTable.cs">
+    <Compile Include="controls\LocationsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="controls\LocationsForm.Designer.cs">
+      <DependentUpon>LocationsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="controls\table\ColorCell.cs" />
+    <Compile Include="controls\table\GridCell.cs" />
+    <Compile Include="controls\table\SimpleTable.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="controls\SimpleTable.Designer.cs">
+    <Compile Include="controls\table\SimpleTable.Designer.cs">
       <DependentUpon>SimpleTable.cs</DependentUpon>
     </Compile>
     <Compile Include="controls\SolutionTree.cs">
@@ -73,6 +91,8 @@
     <Compile Include="controls\SolutionTree.Designer.cs">
       <DependentUpon>SolutionTree.cs</DependentUpon>
     </Compile>
+    <Compile Include="controls\table\SimpleTableModel.cs" />
+    <Compile Include="controls\table\StringCell.cs" />
     <Compile Include="ext\PathEx.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -85,6 +105,7 @@
     <Compile Include="model\ProjectItem.cs" />
     <Compile Include="model\SolutionItem.cs" />
     <Compile Include="model\TreeBuilder.cs" />
+    <Compile Include="model\TreeItemBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
@@ -92,7 +113,13 @@
     <EmbeddedResource Include="controls\FormResolveConnections.resx">
       <DependentUpon>FormResolveConnections.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="controls\SimpleTable.resx">
+    <EmbeddedResource Include="controls\InputDialogBox.resx">
+      <DependentUpon>InputDialogBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\LocationsForm.resx">
+      <DependentUpon>LocationsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\table\SimpleTable.resx">
       <DependentUpon>SimpleTable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="controls\SolutionTree.resx">
@@ -125,9 +152,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\IconOff.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +159,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Ok.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Options.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Close.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -8,11 +8,16 @@ namespace Hijacker.model
 {
     public static class TreeBuilder
     {
-        public static ITreeItem[] Build(string rootPath, Action<double?, string> progress)
+        public static ITreeItem[] Build(string[] rootPaths, Action<double?, string> progress)
+        {
+            return rootPaths.SelectMany(x => Build(x, progress)).ToArray();
+        }
+
+        private static ITreeItem[] Build(string rootPath, Action<double?, string> progress)
         {
             var roots = Directory.EnumerateDirectories(rootPath, "*", SearchOption.TopDirectoryOnly);
             FolderItem root = new FolderItem(rootPath);
-            double rateProgress = 1.0/roots.Count();
+            double rateProgress = 1.0 / roots.Count();
             int current = 0;
             foreach (string viewFolder in roots)
             {
@@ -25,7 +30,7 @@ namespace Hijacker.model
                 if (slns.Length > 0)
                 {
                     folderItem.Children.AddRange(slns);
-                    root.Children.Add(folderItem);                    
+                    root.Children.Add(folderItem);
                 }
             }
             return root.Children.ToArray();

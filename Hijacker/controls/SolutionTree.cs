@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using Hijacker.ext;
 using Hijacker.model;
 
 namespace Hijacker.controls
@@ -17,6 +19,7 @@ namespace Hijacker.controls
         private readonly List<Column> m_columns = new List<Column>();
         private int[] m_columnSizes;
         private ITreeItem[] m_items;
+        private readonly Dictionary<ITreeItem, string> m_tags = new Dictionary<ITreeItem, string>();
         private readonly Dictionary<ITreeItem, bool> m_collapsed = new Dictionary<ITreeItem, bool>();
         private Dictionary<ITreeItem, Dictionary<string, string>> m_data = new Dictionary<ITreeItem, Dictionary<string, string>>();
         private readonly Pen m_innerLinePen = Pens.LightGray;
@@ -31,7 +34,7 @@ namespace Hijacker.controls
 
         public event EventHandler<ITreeItem> SelectionChanged;
 
-        private static bool m_showAll;
+        private static bool s_showAll;
         private ITreeItem[] m_colored;
 
         public ITreeItem Selected { get; private set; }
@@ -52,6 +55,11 @@ namespace Hijacker.controls
         public SolutionTree()
         {
             InitializeComponent();
+        }
+
+        public void SetTag(string tag)
+        {
+            
         }
 
         public void SetModel(ITreeItem[] items)
@@ -113,7 +121,7 @@ namespace Hijacker.controls
                 m_requestUpdateModel = false;
             }
             int row = 1;
-            foreach (ITreeItem treeItem in m_items)
+            foreach (ITreeItem treeItem in m_items) // .GroupBy(x => x.Tag)
             {
                 DrawItem(e.Graphics, treeItem, 1, ref row);
             }
@@ -138,7 +146,7 @@ namespace Hijacker.controls
 
         private Brush GetForeBrush(ITreeItem item)
         {
-            bool hidden = !item.Visible && m_showAll;
+            bool hidden = !item.Visible && s_showAll;
             bool colored = m_colored != null && m_colored.Contains(item);
             bool selected = item == Selected;
             if (hidden)
@@ -158,7 +166,7 @@ namespace Hijacker.controls
 
         private void DrawItem(Graphics g, ITreeItem item, int lvl, ref int row)
         {
-            if (!item.Visible && !m_showAll)
+            if (!item.Visible && !s_showAll)
             {
                 return;
             }
@@ -225,6 +233,8 @@ namespace Hijacker.controls
 
         #endregion Drawing
 
+        #region Interactions
+
         private void CanvasOnMouseDown(object sender, MouseEventArgs e)
         {
             int row = e.Y / c_rowHeight - 1;
@@ -232,9 +242,9 @@ namespace Hijacker.controls
             var item = GetItem(m_items, ref row, ref lvl);
             if (item != null)
             {
-                if (lvl*c_rowHeight > e.X)
+                if (lvl * c_rowHeight > e.X)
                 {
-                    m_collapsed[item] = !m_collapsed[item];                        
+                    m_collapsed[item] = !m_collapsed[item];
                 }
                 Selected = item;
                 if (SelectionChanged != null)
@@ -243,19 +253,24 @@ namespace Hijacker.controls
                 }
                 if (e.Button == MouseButtons.Right)
                 {
+                    addTagToolStripMenuItem.Enabled = lvl == 1;
+                    openSolutionToolStripMenuItem.Enabled = !(Selected is FolderItem);
                     hideToolStripMenuItem.Checked = !Selected.Visible;
+                    removeViewToolStripMenuItem.Enabled = Selected is FolderItem;
                     contextMenuStrip.Show(Cursor.Position);
                 }
                 canvas.Refresh();
             }
-            canvas.Height = (VisibleRowsCount(m_items) + 1)*c_rowHeight;
+            canvas.Height = (VisibleRowsCount(m_items) + 1) * c_rowHeight;
         }
+
+        #endregion Interactions
 
         private ITreeItem GetItem(IEnumerable<ITreeItem> items, ref int row, ref int lvl)
         {
             if (items != null)
             {
-                foreach (ITreeItem item in items.Where(x => x.Visible || m_showAll))
+                foreach (ITreeItem item in items.Where(x => x.Visible || s_showAll))
                 {
                     row--;
                     if (!m_collapsed[item])
@@ -286,7 +301,7 @@ namespace Hijacker.controls
 
         private int VisibleRowsCount(IEnumerable<ITreeItem> items)
         {
-            return items == null ? 0 : items.Where(x => x.Visible || m_showAll).Sum(item => !m_collapsed[item] ? VisibleRowsCount(item.Children) + 1 : 1);
+            return items == null ? 0 : items.Where(x => x.Visible || s_showAll).Sum(item => !m_collapsed[item] ? VisibleRowsCount(item.Children) + 1 : 1);
         }
 
         private void UpdateModel()
@@ -359,11 +374,13 @@ namespace Hijacker.controls
             }
         }
 
+        #region Context Menu
+
         private void OnLocation(object sender, EventArgs e)
         {
             if (Selected != null)
             {
-                Process.Start(Selected.Path);                
+                Process.Start(Selected.Path);
             }
         }
 
@@ -371,6 +388,20 @@ namespace Hijacker.controls
         {
             if (Selected == null || Selected is FolderItem) return;
             Process.Start(Selected.FilePath);
+        }
+
+        private void OnAddTag(object sender, EventArgs e)
+        {
+            if (Selected == null)
+            {
+                return;
+            }
+            string tag = Selected.Tag;
+            if (InputDialogBox.ShowDialog("Tag for " + Selected, ref tag))
+            {
+                Selected.Tag = tag;
+                canvas.Refresh();
+            }
         }
 
         private void OnHide(object sender, EventArgs e)
@@ -381,8 +412,26 @@ namespace Hijacker.controls
 
         private void OnShowAll(object sender, EventArgs e)
         {
-            m_showAll = !m_showAll;
+            s_showAll = !s_showAll;
             canvas.Refresh();
         }
+
+        private void OnRemoveView(object sender, EventArgs e)
+        {
+            var folder = Selected as FolderItem;
+            if (folder == null) return;
+
+            string data = PathEx.Cmd("lsview -host " + Environment.MachineName + " -quick", "cleartool.exe");
+            if (data == null) return;
+            string text = string.Format("Are you sure you want to remove the view {0} ({1})?", folder.Name, folder.Path);
+            if (
+                MessageBox.Show(this, text, @"Remove view",
+                    MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                PathEx.Cmd("rmview " + folder.Path, "cleartool.exe");
+            }
+        }
+
+        #endregion Context Menu
     }
 }

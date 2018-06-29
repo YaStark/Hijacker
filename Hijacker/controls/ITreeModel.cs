@@ -10,5 +10,6 @@ namespace Hijacker.controls
         string Path { get; }
         string FilePath { get; }
         bool Visible { get; set; }
+        string Tag { get; set; }
     }
 }

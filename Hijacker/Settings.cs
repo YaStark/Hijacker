@@ -16,15 +16,19 @@ namespace Hijacker
 
         public int[] HiddenItems { get; set; }
 
+        public FolderTag[] Tags { get; set; }
+
         public Settings()
         {
             HiddenItems = new int[0];
             VobPaths = new string[0];
         }
 
-        public Settings(int[] hiddenItems, string[] vobPaths)
+        public Settings(int[] hiddenItems, string[] vobPaths, Dictionary<string, int[]> tags)
         {
             HiddenItems = hiddenItems;
+            VobPaths = vobPaths;
+            //Tags = tags;
         }
 
         private static void GetHiddenItems(ITreeItem item, ref List<int> hashs)
@@ -54,18 +58,23 @@ namespace Hijacker
                 SetHiddenItems(sln, HiddenItems);                
             }
         }
-        
-        public static void Set(ITreeItem[] items)
+
+        private static XmlSerializer GetSerializer()
+        {
+            return new XmlSerializer(typeof(Settings), new[] {typeof(FolderTag)});
+        }
+
+        public static void Set(ITreeItem[] items, string[] paths)
         {
             List<int> hashs = new List<int>();
             foreach (ITreeItem item in items)
             {
                 GetHiddenItems(item, ref hashs);
             }
-            Settings settings = new Settings(hashs.Distinct().ToArray(), null);
+            Settings settings = new Settings(hashs.Distinct().ToArray(), paths, null);
             try
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+                XmlSerializer serializer = GetSerializer();
                 using (FileStream stream = new FileStream(c_fileName, FileMode.Truncate))
                 {
                     serializer.Serialize(stream, settings);
@@ -83,7 +92,7 @@ namespace Hijacker
             {
                 try
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+                    XmlSerializer serializer = GetSerializer();
                     using (FileStream stream = new FileStream(c_fileName, FileMode.Open))
                     {
                         settings = (Settings) serializer.Deserialize(stream);
@@ -94,6 +103,25 @@ namespace Hijacker
                 }
             }
             return settings;
+        }
+    }
+
+    [Serializable]
+    public class FolderTag
+    {
+        public string Tag { get; set; }
+
+        public int[] Items { get; set; }
+
+        public FolderTag()
+        {
+            Items = new int[0];
+        }
+
+        public FolderTag(string tag, int[] items)
+        {
+            Tag = tag;
+            Items = items;
         }
     }
 }

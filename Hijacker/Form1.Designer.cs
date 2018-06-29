@@ -32,7 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.btnRefresh = new System.Windows.Forms.ToolStripButton();
+            this.btnOptions = new System.Windows.Forms.ToolStripDropDownButton();
+            this.itemRefresh = new System.Windows.Forms.ToolStripMenuItem();
+            this.itemLocations = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.lblSelected = new System.Windows.Forms.ToolStripLabel();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.panelProgress = new System.Windows.Forms.Panel();
             this.progressBar = new System.Windows.Forms.ProgressBar();
@@ -56,22 +60,54 @@
             // toolStrip
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnRefresh});
+            this.btnOptions,
+            this.toolStripSeparator1,
+            this.lblSelected});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(1060, 25);
             this.toolStrip.TabIndex = 6;
             this.toolStrip.Text = "toolStrip1";
             // 
-            // btnRefresh
+            // btnOptions
             // 
-            this.btnRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
-            this.btnRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(50, 22);
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.Click += new System.EventHandler(this.Refresh);
+            this.btnOptions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.itemRefresh,
+            this.itemLocations});
+            this.btnOptions.Image = global::Hijacker.Properties.Resources.Options;
+            this.btnOptions.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnOptions.Name = "btnOptions";
+            this.btnOptions.Size = new System.Drawing.Size(78, 22);
+            this.btnOptions.Text = "Options";
+            // 
+            // itemRefresh
+            // 
+            this.itemRefresh.Name = "itemRefresh";
+            this.itemRefresh.Size = new System.Drawing.Size(134, 22);
+            this.itemRefresh.Text = "Refresh";
+            this.itemRefresh.Click += new System.EventHandler(this.OnRefresh);
+            // 
+            // itemLocations
+            // 
+            this.itemLocations.Name = "itemLocations";
+            this.itemLocations.Size = new System.Drawing.Size(134, 22);
+            this.itemLocations.Text = "Locations...";
+            this.itemLocations.Click += new System.EventHandler(this.OnChooseLocations);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // lblSelected
+            // 
+            this.lblSelected.AutoSize = false;
+            this.lblSelected.Name = "lblSelected";
+            this.lblSelected.Size = new System.Drawing.Size(125, 22);
+            this.lblSelected.Text = "(Empty selection)";
+            this.lblSelected.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblSelected.ToolTipText = "Click to reset selected dll";
+            this.lblSelected.Click += new System.EventHandler(this.OnResetSelectedDll);
             // 
             // backgroundWorker
             // 
@@ -116,7 +152,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.hijackItemsTable1.Location = new System.Drawing.Point(556, 25);
             this.hijackItemsTable1.Name = "hijackItemsTable1";
-            this.hijackItemsTable1.Size = new System.Drawing.Size(492, 116);
+            this.hijackItemsTable1.Size = new System.Drawing.Size(492, 46);
             this.hijackItemsTable1.TabIndex = 7;
             // 
             // solutionTree1
@@ -152,10 +188,10 @@
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1060, 493);
-            this.Controls.Add(this.panelProgress);
             this.Controls.Add(this.panelData);
+            this.Controls.Add(this.panelProgress);
             this.Name = "Form1";
-            this.TopMost = true;
+            this.Text = "Hijacker";
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.panelProgress.ResumeLayout(false);
@@ -172,12 +208,16 @@
         private controls.Column columnPath;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripButton btnRefresh;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.Panel panelProgress;
         private System.Windows.Forms.Panel panelData;
         private controls.HijackItemsTable hijackItemsTable1;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripLabel lblSelected;
+        private System.Windows.Forms.ToolStripDropDownButton btnOptions;
+        private System.Windows.Forms.ToolStripMenuItem itemRefresh;
+        private System.Windows.Forms.ToolStripMenuItem itemLocations;
     }
 }
 
